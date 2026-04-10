@@ -7,6 +7,12 @@ description: "End-to-end blog publishing workflow for cuiliang.ai. Covers enviro
 
 End-to-end workflow for the **cuiliang.ai** Hugo blog: environment setup, article creation, review, and publishing.
 
+> **First-time setup**: Before using Tasks 2/4 (Environment Setup / Publish), you need to configure your git identity and API credentials. The skill will prompt you for:
+> - Your name and email (for git commits)
+> - Your Anthropic API key or local proxy URL
+>
+> These are NOT stored in the skill — configure them in your local environment.
+
 ## Blog Identity
 
 - **Site**: https://cuiliang.ai/
@@ -49,9 +55,6 @@ git submodule status       # themes/PaperMod must exist
 
 # 4. Hugo build test
 hugo server --port 1314    # Quick smoke test, Ctrl+C after confirming it works
-
-# 5. Optional: Obsidian CLI (requires Obsidian running)
-obsidian version           # 1.12+
 ```
 
 Report results as a checklist table. Flag any missing/mismatched versions.
@@ -60,7 +63,9 @@ Report results as a checklist table. Flag any missing/mismatched versions.
 
 ## Task 2: Environment Setup（环境搭建）
 
-When user asks to set up the blog environment on a new machine, follow these steps IN ORDER:
+When user asks to set up the blog environment on a new machine, follow these steps IN ORDER.
+
+> **Important**: Before starting, ask the user for their git name and email. Do NOT use hardcoded values.
 
 ### Step 1: Install base tools (Windows)
 
@@ -75,9 +80,9 @@ winget install GitHub.cli             # GitHub CLI
 winget install Hugo.Hugo.Extended     # Hugo Extended (MUST be Extended edition)
 winget install Python.Python.3.12     # Python 3.12
 
-# Git config
-git config --global user.name "Liang Cui"
-git config --global user.email "cuiliang@microsoft.com"
+# Git config — ask user for their name and email
+git config --global user.name "<YOUR_NAME>"
+git config --global user.email "<YOUR_EMAIL>"
 
 # GitHub auth
 gh auth login
@@ -99,29 +104,25 @@ npm install -g @anthropic-ai/claude-code
 
 ### Step 4: Configure Claude Code
 
-Create `~/.claude/settings.json`:
+Create `~/.claude/settings.json`. Ask the user for their API configuration:
+
+- **Option A — Local proxy**: Set `ANTHROPIC_BASE_URL` to the proxy address
+- **Option B — Direct API**: Set `ANTHROPIC_BASE_URL` to `https://api.anthropic.com` and `ANTHROPIC_AUTH_TOKEN` to the API key
 
 ```json
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "http://localhost:4141",
-    "ANTHROPIC_AUTH_TOKEN": "dummy",
+    "ANTHROPIC_BASE_URL": "<YOUR_API_BASE_URL>",
+    "ANTHROPIC_AUTH_TOKEN": "<YOUR_API_KEY>",
     "ANTHROPIC_MODEL": "claude-opus-4.6-1m",
-    "ANTHROPIC_SMALL_FAST_MODEL": "claude-sonnet-4.6",
-    "DISABLE_NON_ESSENTIAL_MODEL_CALLS": "1",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "ANTHROPIC_SMALL_FAST_MODEL": "claude-sonnet-4.6"
   }
 }
 ```
 
-> If using Anthropic API directly instead of local proxy:
-> - Set `ANTHROPIC_BASE_URL` to `https://api.anthropic.com`
-> - Set `ANTHROPIC_AUTH_TOKEN` to your actual API key
+### Step 5: Configure MCP Servers (Optional)
 
-### Step 5: Configure MCP Servers
-
-Add to `~/.claude.json`:
+Add memory server to `~/.claude.json`:
 
 ```json
 {
@@ -131,39 +132,23 @@ Add to `~/.claude.json`:
       "command": "cmd",
       "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-memory"],
       "env": {
-        "MEMORY_FILE_PATH": "C:\\Users\\<username>\\.shared-ai-memory\\memory.jsonl"
+        "MEMORY_FILE_PATH": "<YOUR_HOME_DIR>\.shared-ai-memory\memory.jsonl"
       }
     }
   }
 }
 ```
 
-```powershell
-mkdir "$env:USERPROFILE\.shared-ai-memory"
+### Step 6: Install Skills
+
+Install the required skills:
+
+```bash
+claude skill add --url https://github.com/cuiliang-ai/skills/blob/main/blog-review.md
+claude skill add --url https://github.com/cuiliang-ai/skills/blob/main/blog-publisher.md
 ```
 
-Notion MCP is project-level (already in `<repo>/.claude/settings.json`), first use triggers OAuth.
-
-### Step 6: Copy Skills
-
-Copy the `~/.claude/skills/` directory from source machine. **Minimum required**:
-- `blog-review/` — 8-dimension article scoring
-- `obsidian-cli/` — Obsidian vault management
-- `blog-publisher/` — this skill
-
-### Step 7: Copy global CLAUDE.md
-
-Copy `~/.claude/CLAUDE.md` from source machine. Update vault paths if different.
-
-### Step 8: Optional — Obsidian
-
-```powershell
-winget install Obsidian.Obsidian  # v1.12.4+
-# Open Obsidian → "Open folder as vault" → choose vault directory
-# Login to Obsidian Sync if using sync
-```
-
-### Step 9: Verify
+### Step 7: Verify
 
 Run Task 1 (Environment Check) to confirm everything works.
 
@@ -272,41 +257,11 @@ Publishing threshold: composite score ≥ 8.5, no dimension below 8.0.
 
 ---
 
-## Directory Structure Reference
-
-```
-~/.claude/
-├── CLAUDE.md              # Global instructions (Memory + Obsidian rules)
-├── settings.json          # API config, env vars
-├── skills/                # Skills (including this one)
-│   ├── blog-publisher/
-│   ├── blog-review/
-│   ├── obsidian-cli/
-│   └── ...
-~/.claude.json             # Global MCP servers (memory, etc.)
-~/.shared-ai-memory/
-└── memory.jsonl           # Knowledge graph data
-
-<repo>/cuiliang.ai/
-├── CLAUDE.md              # Project instructions (Hugo workflow)
-├── .claude/settings.json  # Project MCP (Notion)
-├── hugo.yaml              # Hugo config
-├── content/posts/         # Articles (page bundles)
-│   └── <slug>/index.md
-├── themes/PaperMod/       # Theme submodule
-└── .github/workflows/     # CI/CD (deploy.yml)
-```
-
----
-
 ## Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
 | Hugo version mismatch | CI uses `v0.147.0`. Install exact version: `winget install Hugo.Hugo.Extended --version 0.147.0` |
 | PaperMod submodule empty | `git submodule update --init --recursive` |
-| Obsidian CLI unavailable | Obsidian desktop app must be running |
-| Claude Code connection failed | Check `ANTHROPIC_BASE_URL` reachability; ensure proxy is running |
-| Notion MCP auth expired | Run any Notion operation in Claude Code to re-authenticate |
-| Memory MCP migration | Copy `memory.jsonl` to new machine's `~/.shared-ai-memory/` |
+| Claude Code connection failed | Check `ANTHROPIC_BASE_URL` reachability; ensure proxy/API key is correct |
 | Article not appearing after push | Wait 2-3 min for GitHub Actions; check `draft: false` is set |
