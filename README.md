@@ -1,54 +1,84 @@
 # Claude Code Skills
 
-Reusable [Claude Code](https://claude.com/claude-code) skill definitions by [Cui Liang](https://cuiliang.ai).
+Reusable [Claude Code](https://claude.ai/code) skill definitions by [Cui Liang](https://cuiliang.ai).
+
+Follow the [Agent Skills](https://agentskills.io) open standard — works across Claude Code, Cursor, Gemini CLI, VS Code Copilot, and other compatible agents.
 
 ## Available Skills
 
-| Skill | Description |
-|-------|-------------|
-| **[blog-review](blog-review/)** | 8 维度结构化评分体系审查博客文章质量 |
-| **[blog-publisher](blog-publisher/)** | 端到端博客发布工作流（Hugo + PaperMod） |
-| **[interactive-diagram](interactive-diagram/)** | 为 mdBook 生成 8 种交互式图表（纯 HTML/CSS/JS，零依赖） |
-| **[token-usage](token-usage/)** | Claude Code Token 用量分析与可视化报告生成 |
+| Skill | Description | Invoke |
+|-------|-------------|--------|
+| **[blog-review](blog-review/)** | 8 维度结构化评分体系审查博客文章质量 | `/blog-review` |
+| **[blog-publisher](blog-publisher/)** | 端到端博客发布工作流（Hugo + PaperMod） | `/blog-publisher` |
+| **[interactive-diagram](interactive-diagram/)** | 为 mdBook 生成 8 种交互式图表（纯 HTML/CSS/JS，零依赖） | `/interactive-diagram` |
+| **[token-usage](token-usage/)** | Claude Code Token 用量分析与可视化报告生成 | `/token-usage` |
 
 ## Install
 
-Each skill is a directory with `SKILL.md` as the entry point, following the [Agent Skills](https://agentskills.io) open standard.
+### Method 1: Copy to personal skills directory（推荐）
 
-**Option 1 — Clone to personal skills directory** (all your projects can use it):
+Personal skills are available across **all** your projects:
 
 ```bash
-# Clone the repo
 git clone https://github.com/cuiliang-ai/skills.git /tmp/cuiliang-skills
 
-# Copy individual skills
-cp -r /tmp/cuiliang-skills/blog-review ~/.claude/skills/blog-review
-cp -r /tmp/cuiliang-skills/blog-publisher ~/.claude/skills/blog-publisher
+# Install one skill
 cp -r /tmp/cuiliang-skills/interactive-diagram ~/.claude/skills/interactive-diagram
+
+# Or install all
+cp -r /tmp/cuiliang-skills/*/ ~/.claude/skills/
 ```
 
-**Option 2 — Clone to project skills directory** (project-scoped):
+After copying, the skill is immediately available — type `/interactive-diagram` in Claude Code.
+
+### Method 2: Copy to project skills directory
+
+Project-scoped skills only apply to one project and can be committed to version control:
 
 ```bash
 cp -r /tmp/cuiliang-skills/interactive-diagram .claude/skills/interactive-diagram
 ```
 
-**Option 3 — Use as additional directory** (read-only, session-scoped):
+### Method 3: Add as additional directory（零安装）
+
+Read-only, session-scoped — no files are copied:
 
 ```bash
 claude --add-dir /path/to/cuiliang-skills
+```
+
+All skills from the directory become available in that session.
+
+### Method 4: Git submodule（团队共享）
+
+Add as a submodule for team-wide access:
+
+```bash
+git submodule add https://github.com/cuiliang-ai/skills.git .claude/skills/cuiliang-skills
 ```
 
 ## Skill Structure
 
 ```
 <skill-name>/
-├── SKILL.md           # Entry point (required)
+├── SKILL.md           # Entry point with YAML frontmatter (required)
 ├── reference/         # Reference docs (loaded on demand)
 ├── templates/         # Templates for Claude to fill in
 ├── scripts/           # Scripts Claude can execute
 └── examples/          # Example outputs
 ```
+
+## Compatibility
+
+Skills follow the [Agent Skills](https://agentskills.io) open standard. Compatible with:
+
+- [Claude Code](https://claude.ai/code)
+- [Cursor](https://cursor.com)
+- [VS Code Copilot](https://code.visualstudio.com)
+- [Gemini CLI](https://geminicli.com)
+- [Roo Code](https://roocode.com)
+- [OpenHands](https://openhands.dev)
+- And [many more](https://agentskills.io)
 
 ## License
 
