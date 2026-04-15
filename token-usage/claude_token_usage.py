@@ -357,8 +357,8 @@ def generate_html_report(daily: dict, sorted_dates: list, hourly: dict, model_da
     # --- Alerts & Attention Points ---
     alerts = []  # list of (level, icon, title, detail)  level: "critical", "warning", "info"
 
-    # 1. Cost spike days: any day > 3x average
-    if avg_daily_cost > 0:
+    # 1. Cost spike days: any day > 3x average (skip for single-day queries)
+    if avg_daily_cost > 0 and num_days > 1:
         spike_days = [(d, daily[d]["cost_usd"]) for d in sorted_dates if daily[d]["cost_usd"] > avg_daily_cost * 3]
         if spike_days:
             spike_list = ", ".join(f"{d} (${c:,.0f})" for d, c in spike_days)
@@ -397,16 +397,16 @@ def generate_html_report(daily: dict, sorted_dates: list, hourly: dict, model_da
             "This is normal for heavy coding sessions but worth noting for cost awareness — "
             "each tool call still consumes full input context."))
 
-    # 5. High daily volatility
-    if cost_volatility > 20:
+    # 5. High daily volatility (skip for single-day queries)
+    if cost_volatility > 20 and num_days > 1:
         alerts.append(("warning", "volatility",
             f"Cost volatility is {cost_volatility:.0f}x between busiest and quietest days",
             f"The busiest day ({peak_date}, ${peak_cost:,.0f}) cost {cost_volatility:.0f}x more than the quietest "
             f"({lowest_date}, ${lowest_cost:,.0f}). High variance makes budget forecasting difficult. "
             "Consider setting daily spending alerts or session-level token budgets."))
 
-    # 6. Large single-day percentage of total cost
-    if peak_cost > 0 and total_cost > 0:
+    # 6. Large single-day percentage of total cost (skip for single-day queries)
+    if peak_cost > 0 and total_cost > 0 and num_days > 1:
         peak_share = peak_cost / total_cost * 100
         if peak_share > 25:
             alerts.append(("warning", "concentration",

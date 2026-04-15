@@ -16,16 +16,22 @@ The analysis script is co-located with this skill:
 
 ## Usage
 
-Run via (works on any machine/user):
-
+**Recommended (cross-platform, works in any shell):**
 ```bash
-python "$(echo ~/.claude/skills/token-usage/claude_token_usage.py)" [options]
+python -c "import pathlib,subprocess,sys;subprocess.run([sys.executable,str(pathlib.Path.home()/'.claude'/'skills'/'token-usage'/'claude_token_usage.py')]+sys.argv[1:])" [options]
 ```
 
-Or on Windows CMD:
+**Or use Python's `~` expansion (works in bash/zsh/PowerShell):**
+```bash
+python ~/.claude/skills/token-usage/claude_token_usage.py [options]
+```
+
+**Windows CMD only:**
 ```cmd
 python "%USERPROFILE%\.claude\skills\token-usage\claude_token_usage.py" [options]
 ```
+
+> **Note for Claude Code**: The Bash tool may not expand `%USERPROFILE%`. Always prefer the `~` form or use the full absolute path (e.g., `python "C:\Users\<username>\.claude\skills\token-usage\claude_token_usage.py"`).
 
 ### Command Reference
 
