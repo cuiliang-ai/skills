@@ -8,6 +8,7 @@ Reusable [Claude Code](https://claude.com/claude-code) skill definitions by [Cui
 |-------|-------------|
 | **[blog-review](blog-review/)** | 8 维度结构化评分体系审查博客文章质量 |
 | **[blog-publisher](blog-publisher/)** | 端到端博客发布工作流（Hugo + PaperMod） |
+| **[token-usage](token-usage/)** | Claude Code Token 用量分析与可视化报告生成 |
 
 ## Install
 
