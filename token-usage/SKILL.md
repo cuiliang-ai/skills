@@ -58,7 +58,12 @@ The HTML report includes:
 
 After generating HTML, open it in the browser:
 ```bash
-start "" "C:\Users\cuiliang\report.html"
+# Windows
+start "" "report.html"
+# macOS
+open report.html
+# Linux
+xdg-open report.html
 ```
 
 ## Data Source
