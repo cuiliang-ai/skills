@@ -37,9 +37,10 @@ python "%USERPROFILE%\.claude\skills\token-usage\claude_token_usage.py" [options
 | `python claude_token_usage.py --all` | All available data |
 | `python claude_token_usage.py --date 2026-04-15` | Specific date |
 | `python claude_token_usage.py --csv output.csv` | Export to CSV |
-| `python claude_token_usage.py --html report.html` | Generate interactive HTML report |
-| `python claude_token_usage.py --html report.html --all` | Full HTML report |
-| `python claude_token_usage.py --html report.html --days 7` | 7-day HTML report |
+| `python claude_token_usage.py --html` | Generate HTML report (auto-named `token-report-YYYY-MM-DD.html`) |
+| `python claude_token_usage.py --html report.html` | Generate HTML report with custom filename |
+| `python claude_token_usage.py --html --all` | Full HTML report |
+| `python claude_token_usage.py --html --days 7` | 7-day HTML report |
 
 ### HTML Report Contents
 

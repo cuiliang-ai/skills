@@ -1369,7 +1369,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Show all time data")
     parser.add_argument("--date", type=str, help="Show specific date (YYYY-MM-DD)")
     parser.add_argument("--csv", type=str, help="Export to CSV file")
-    parser.add_argument("--html", type=str, help="Generate HTML report")
+    parser.add_argument("--html", type=str, nargs="?", const="auto", help="Generate HTML report (default filename: token-report-YYYY-MM-DD.html)")
     parser.add_argument("--claude-dir", type=str, default=None, help="Path to .claude directory")
     args = parser.parse_args()
 
@@ -1416,6 +1416,9 @@ def main():
 
     # HTML report
     if args.html:
+        if args.html == "auto":
+            today_str = datetime.now().strftime("%Y-%m-%d")
+            args.html = f"token-report-{today_str}.html"
         filtered_records = filter_records_by_dates(all_records, sorted_dates)
         hourly = aggregate_hourly(filtered_records)
         model_data = aggregate_by_model(filtered_records)
