@@ -12,6 +12,7 @@ Follow the [Agent Skills](https://agentskills.io) open standard — works across
 | **[blog-publisher](blog-publisher/)** | 端到端博客发布工作流（Hugo + PaperMod） | `/blog-publisher` |
 | **[interactive-diagram](interactive-diagram/)** | 为 mdBook 生成 8 种交互式图表（纯 HTML/CSS/JS，零依赖） | `/interactive-diagram` |
 | **[token-usage](token-usage/)** | Claude Code Token 用量分析与可视化报告生成 | `/token-usage` |
+| **[cc-codex-bridge](cc-codex-bridge/)** | CC ↔ Codex CLI 双 agent 协作：CC 规划/审查，Codex 执行 | `/codex-impl` |
 
 ## Install
 
